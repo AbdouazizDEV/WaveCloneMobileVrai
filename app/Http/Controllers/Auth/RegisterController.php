@@ -6,6 +6,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Services\RegistrationService;
 use Illuminate\Support\Facades\Log;
 
+
 class RegisterController extends Controller
 {
     protected $registrationService;
