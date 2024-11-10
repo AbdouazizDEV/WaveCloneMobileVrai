@@ -16,6 +16,13 @@ use App\Http\Controllers\UserController;
 | API Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'time' => now(),
+        'app_name' => config('app.name')
+    ]);
+});
 
 // Routes publiques
 Route::post('/register', [RegisterController::class, 'register']);

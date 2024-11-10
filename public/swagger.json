@@ -1,0 +1,302 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Wave API Documentation",
+      "description": "API de gestion de transfert d'argent et de paiements",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://127.0.0.1:8000/api",
+        "description": "Local Development Server"
+      }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "tags": ["Authentication"],
+          "summary": "Inscription d'un nouvel utilisateur",
+          "description": "Crée un nouveau compte utilisateur avec génération de QR code",
+          "operationId": "register",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["nom", "prenom", "telephone", "email", "roleId"],
+                  "properties": {
+                    "nom": {
+                      "type": "string",
+                      "example": "Diop"
+                    },
+                    "prenom": {
+                      "type": "string",
+                      "example": "Abdou"
+                    },
+                    "telephone": {
+                      "type": "string",
+                      "example": "776543210"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "example": "user@example.com"
+                    },
+                    "roleId": {
+                      "type": "integer",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Utilisateur créé avec succès",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Utilisateur créé avec succès"
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "nom": {
+                            "type": "string",
+                            "example": "Diop"
+                          },
+                          "prenom": {
+                            "type": "string",
+                            "example": "Abdou"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "user@example.com"
+                          },
+                          "telephone": {
+                            "type": "string",
+                            "example": "776543210"
+                          },
+                          "code": {
+                            "type": "string",
+                            "example": "******"
+                          }
+                        }
+                      },
+                      "qr_url": {
+                        "type": "string",
+                        "example": "https://cloudinary.com/qrcodes/qr_1.svg"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Erreur serveur",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Erreur lors de l'inscription"
+                      },
+                      "details": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": ["Authentication"],
+          "summary": "Connexion utilisateur",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["email", "password"],
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string",
+                      "format": "password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Connexion réussie"
+            }
+          }
+        }
+      },
+      "/transfer": {
+        "post": {
+          "tags": ["Transactions"],
+          "summary": "Effectuer un transfert",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["recipient", "amount"],
+                  "properties": {
+                    "recipient": {
+                      "type": "string",
+                      "example": "776543210"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "example": 1000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Transfert réussi"
+            }
+          }
+        }
+      },
+      "/transactions/history": {
+        "get": {
+          "tags": ["Transactions"],
+          "summary": "Historique des transactions",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des transactions"
+            }
+          }
+        }
+      },
+      "/transactions/balance": {
+        "get": {
+          "tags": ["Transactions"],
+          "summary": "Vérifier le solde",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Solde actuel"
+            }
+          }
+        }
+      },
+      "/favoris": {
+        "get": {
+          "tags": ["Favoris"],
+          "summary": "Liste des favoris",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Liste des contacts favoris"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Favoris"],
+          "summary": "Ajouter un favori",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Favori ajouté"
+            }
+          }
+        }
+      },
+      "/merchant/pay": {
+        "post": {
+          "tags": ["Merchant"],
+          "summary": "Paiement marchand",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Paiement effectué"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "Authentication",
+        "description": "Opérations d'authentification"
+      },
+      {
+        "name": "Transactions",
+        "description": "Opérations de transfert et transactions"
+      },
+      {
+        "name": "Favoris",
+        "description": "Gestion des contacts favoris"
+      },
+      {
+        "name": "Merchant",
+        "description": "Opérations liées aux marchands"
+      }
+    ]
+  }
