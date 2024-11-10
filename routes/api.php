@@ -16,18 +16,14 @@ use App\Http\Controllers\UserController;
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'time' => now(),
-        'app_name' => config('app.name')
-    ]);
-});
 
 // Routes publiques
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+// routes/api.php
+Route::get('/health', function () {
+    return response()->json(['status' => 'OK']);
+});
 // Routes protégées
 Route::middleware('auth:sanctum')->group(function () {
     // Profil utilisateur
